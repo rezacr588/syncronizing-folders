@@ -70,4 +70,4 @@ def sync(source, dest):
 
   pass
 
-sync(sys.argv[0], sys.argv[1])
+sync(sys.argv[1], sys.argv[2])
