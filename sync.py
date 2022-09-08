@@ -70,4 +70,36 @@ def sync(source, dest):
 
   pass
 
-sync(sys.argv[1], sys.argv[2])
+def fake_sync(source, dest):
+  source_files = os.listdir(source)
+  dest_files = os.listdir(dest)
+  hashed_source_files = {}
+  hashed_dest_files = {}
+  for s in source_files:
+    hashed_source_files[s] = hashfile(os.path.join(source, s))
+  for d in dest_files:
+    hashed_dest_files[d] = hashfile(os.path.join(dest, d))
+
+  
+  for x, y in hashed_source_files.items(): 
+    # If a file exists in the source but not in the destination, copy the file over.
+    if y not in hashed_dest_files.values():
+      print("If" + os.path.join(source, x) + "exists in the source but not in the " + dest +", copy the file over.")
+      
+    # If a file exists in the source, but it has a different name than in the destination, rename the destination file to match.
+    if y in hashed_dest_files.values():
+      key = [k for k, v in hashed_dest_files.items() if v == y][0]
+      print("If " + os.path.join(dest, key) + " exists in the source, but it has " + os.path.join(dest, x) + " than in the destination, rename the destination file to match.")
+      
+  # If a file exists in the destination but not in the source, remove it.    
+  for x, y in hashed_dest_files.items():
+    if y not in hashed_source_files.values():
+      print("If " + os.path.join(dest, x) + " exists in the " + dest + " but not in the source, remove it.")
+
+  pass
+
+if "--dry-run" in sys.argv:
+  fake_sync(sys.argv[1], sys.argv[2])
+else:
+  sync(sys.argv[1], sys.argv[2])
+  
